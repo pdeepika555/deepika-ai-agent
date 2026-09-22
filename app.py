@@ -1,22 +1,29 @@
-import streamlit as st
 from openai import OpenAI
+from dotenv import load_dotenv
+from pathlib import Path
 
-st.title("🤖 Deepika's AI Agent")
-st.write("Hello! Ask me anything.")
+load_dotenv(Path(__file__).with_name(".env"))
+client = OpenAI()
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+print("🤖 AI Agent is ready!")
+print("Type 'exit' to stop.\n")
 
-question = st.text_input("Enter your question:")
+while True:
 
-if st.button("Ask AI"):
-if question:
-with st.spinner("Thinking..."):
-response = client.responses.create(
-model="gpt-5.6-luna",
-instructions="You are a friendly and helpful AI assistant created by Deepika Pandey.",
-input=question
-)
+    # Take input from user
+    user_message = input("You: ")
 
-st.success(response.output_text)
-else:
-st.warning("Please enter a question.")
+    # Stop the agent
+    if user_message.lower() == "exit":
+        print("Agent: Goodbye!")
+        break
+
+    # Send the message to the LLM
+    response = client.responses.create(
+        model="gpt-5.6-luna",
+        instructions="You are a helpful AI assistant for college students.",
+        input=user_message
+    )
+
+    # Display the LLM's answer
+    print("Agent:", response.output_text)
